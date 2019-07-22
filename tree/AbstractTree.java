@@ -1,6 +1,30 @@
 package tree;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public abstract class AbstractTree<E> implements Tree<E> {
+	
+	public class ElementIterator implements Iterator<E>{
+		Iterator<Position<E>> p = positions().iterator();
+
+		@Override
+		public boolean hasNext() {
+			return p.hasNext();
+		}
+
+		@Override
+		public E next() {
+			return p.next().getElement();
+		}
+		
+		@Override
+		public void remove() {
+			p.remove();
+		}
+		
+	}
 	public boolean isEmpty( ) {
 		return size()==0;
 	}
@@ -40,5 +64,33 @@ public abstract class AbstractTree<E> implements Tree<E> {
 		return h;
 		
 	}
+	
+	@Override
+	public Iterator<E> iterator() {
+		return new ElementIterator();
+	}
+	
+	@Override
+	public Iterable<Position<E>> positions() {
+		return preOrder();
+	}
+	private  Iterable<Position<E>> preOrder(){
+		
+		List<Position<E>> snapshot = new ArrayList<>( );
+		if (!isEmpty( )) {
+			preSubOrder(root(), snapshot);
+		}
+		return snapshot;
+		
+	}
+	private void preSubOrder(Position<E> root, List<Position<E>> snapshot) {
+		snapshot.add(root);
+		for(Position<E> child : children(root)) {
+			preSubOrder(child, snapshot);
+		}
+		
+	}
+	
+	
 
 }
